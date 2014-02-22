@@ -23,9 +23,10 @@ func main() {
 		/*Passing stdin for test mocking*/
 		files, errs := handleArgs(os.Stdin, getopt.CommandLine)
 		for _, file := range files {
-			err := copyPaste(file, opts)
-			if err != nil {
-				errs = append(errs, err)
+			if len(file) != 0 {
+				if err := copyPaste(file, opts); err != nil {
+					errs = append(errs, err)
+				}
 			}
 		}
 		for _, err := range errs {
