@@ -11,6 +11,7 @@ import (
 	url "net/url"
 	"os"
 	"strconv"
+	"time"
 )
 
 const FPASTE_URL = "http://fpaste.org"
@@ -44,7 +45,7 @@ type config struct {
 	user   *string
 	pass   *string
 	lang   *string
-	expire *int
+	expire *string
 }
 
 func initConfig(args []string) *config {
@@ -55,7 +56,7 @@ func initConfig(args []string) *config {
 	flags.user = getopt.StringLong("user", 'u', "", "An alphanumeric username of the paste author")
 	flags.pass = getopt.StringLong("pass", 'p', "", "Add a password")
 	flags.lang = getopt.StringLong("lang", 'l', "Text", "The development language used")
-	flags.expire = getopt.IntLong("expire", 'e', 0, "Seconds after which paste will be deleted from server")
+	flags.expire = getopt.StringLong("expire", 'e', "", "Seconds after which paste will be deleted from server")
 	getopt.SetParameters("[FILE...]")
 	getopt.CommandLine.Parse(args)
 	return &flags
@@ -116,7 +117,11 @@ func copyPaste(src []byte, opts *config) error {
 		"mode":           {"json"},
 		"paste_user":     {*opts.user},
 		"paste_password": {*opts.pass},
-		"paste_expire":   {strconv.Itoa(*opts.expire)},
+	}
+	if duration, err := time.ParseDuration(*opts.expire); err != nil {
+		return err
+	} else if secs := duration.Seconds(); secs >= 1 {
+		values.Add("paste_expire", strconv.FormatFloat(secs, 'f', -1, 64))
 	}
 	if *opts.priv {
 		values.Add("paste_private", "yes")
