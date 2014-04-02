@@ -56,7 +56,7 @@ func initConfig(args []string) *config {
 	flags.user = getopt.StringLong("user", 'u', "", "An alphanumeric username of the paste author")
 	flags.pass = getopt.StringLong("pass", 'p', "", "Add a password")
 	flags.lang = getopt.StringLong("lang", 'l', "Text", "The development language used")
-	flags.expire = getopt.StringLong("expire", 'e', "", "Seconds after which paste will be deleted from server")
+	flags.expire = getopt.StringLong("expire", 'e', "0", "Seconds after which paste will be deleted from server")
 	getopt.SetParameters("[FILE...]")
 	getopt.CommandLine.Parse(args)
 	return &flags
